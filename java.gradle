@@ -16,12 +16,12 @@ java {
     // Set minimum language version.  
     if (project.hasProperty("java_16")) {
         toolchain.languageVersion = JavaLanguageVersion.of(16)
+    } else if (project.hasProperty("java_17")) {
+        toolchain.languageVersion = JavaLanguageVersion.of(17)
+    } else if (project.hasProperty("java_21")) {
+        toolchain.languageVersion = JavaLanguageVersion.of(21)
     } else {
-        if (project.hasProperty("java_17")) {
-            toolchain.languageVersion = JavaLanguageVersion.of(17)
-        } else {
-            toolchain.languageVersion = JavaLanguageVersion.of(8)
-        }
+        toolchain.languageVersion = JavaLanguageVersion.of(8)
     }
 }
 

@@ -23,7 +23,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.neoforged.gradle:userdev:7.0.57'
+        classpath 'net.neoforged.gradle:userdev:7.0.142'
     }
 
 }
@@ -32,7 +32,7 @@ apply plugin: net.neoforged.gradle.userdev.UserDevPlugin
 apply from: 'gradle/property_helper.gradle'
 
 // Configurable Forge Properties
-def neoforgeVersion = getRequiredString('forge_version')
+def neoforgeVersion = getRequiredString('neo_version')
 def clientRunDir = getDefaultString('forge_client_dir', 'run')
 def serverRunDir = getDefaultString('forge_server_dir', 'run')
 def loggingLevel = getDefaultString('forge_log_level', 'debug')
@@ -51,66 +51,31 @@ minecraft.accessTransformers.file file(project.findProperty('forge_at'))
 
 runs {
 
+    configureEach {
+        systemProperty 'forge.logging.markers', 'REGISTRIES'
+        systemProperty 'forge.logging.console.level', 'debug'
+        modSource project.sourceSets.main
+
+        if (loggingANSI) {
+            systemProperty 'terminal.ansi', 'true'
+        }
+    }
+
     client {
         // Sets the folder the client runs in.
         workingDirectory project.file(clientRunDir)
-
-        // Sets the name of the run to include the mod name.
-        // TODO: NeoGradle
-        // taskName modName.replaceAll("\\s", "") + 'Client'
-
-        // Sets Forge's logging level on the client.
-        systemProperty 'forge.logging.console.level', loggingLevel
-
-        // Enables ANSI color codes in the logs.
-        if (loggingANSI) {
-
-            systemProperty 'terminal.ansi', 'true'
-        }
-
-        modSource project.sourceSets.main
     }
 
     server {
-
         // Sets the folder the server runs in.
         workingDirectory project.file(serverRunDir)
-
-        // Sets the name of the run to include the mod name.
-        // TODO: NeoGradle
-        // taskName modName.replaceAll("\\s", "") + 'Server'
-
-        // Sets Forge's logging level on the server.
-        systemProperty 'forge.logging.console.level', loggingLevel
-
-        // Enables ANSI color codes in the logs.
-        if (loggingANSI) {
-
-            systemProperty 'terminal.ansi', 'true'
-        }
-
-        modSource project.sourceSets.main
     }
 
     data {
         // Sets the folder the server runs in.
         workingDirectory project.file(clientRunDir)
 
-        // Sets the name of the run to include the mod name.
-        // taskName modName.replaceAll("\\s", "") + 'Data'
-
-        // Sets Forge's logging level on the server.
-        systemProperty 'forge.logging.console.level', loggingLevel
-        // environment 'target', 'fmluserdevdata'
-
-        // Enables ANSI color codes in the logs.
-        if (loggingANSI) {
-            systemProperty 'terminal.ansi', 'true'
-        }
-
         programArguments.addAll '--mod', modId, '--all', '--output', '"' + rootProject.file('src/generated/resources/') + '"', '--existing', '"' + rootProject.file('src/main/resources') + '"'
-
-        modSource project.sourceSets.main
     }
 }
 
@@ -175,25 +140,6 @@ jar {
         attributes(newProps)
     }
 }
-
-// Forge normally generates this task, but by giving the run config a unique
-// name for multi-project workspaces we also change the name of the generated
-// task. Some 3rd party tools depend on these tasks existing so we recreate
-// them here.
-// TODO: Investigate whether we need to replace task names with NeoGradle
-/*
-task runClient() {
-
-    description = 'Runs the game client in developer/debug mode.'
-    dependsOn modName.replaceAll("\\s", "") + 'Client'
-}
-
-task runServer() {
-
-    description = 'Runs the game server in developer/debug mode.'
-    dependsOn modName.replaceAll("\\s", "") + 'Server'
-}
- */
 
 // Forge's Jar Signer
 def canSignJar = project.hasProperty('keyStore') && project.hasProperty('keyStorePass') && project.hasProperty('keyStoreKeyPass') && project.hasProperty('keyStoreAlias')
