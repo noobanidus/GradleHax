@@ -5,6 +5,6 @@ if (project.hasProperty("jade_version")) {
     def jade_version = getRequiredString("jade_version")
 
     dependencies {
-        implementation fg.deobf("curse.maven:jade-324717:${jade_version}")
+        implementation "curse.maven:jade-324717:${jade_version}"
     }
 }
