@@ -13,7 +13,7 @@ if (project.hasProperty("jei_version")) {
     }
 
     dependencies {
-        implementation fg.deobf("mezz.jei:jei-${jei_version}")
+        implementation "mezz.jei:jei-${jei_version}"
     }
 }
 
